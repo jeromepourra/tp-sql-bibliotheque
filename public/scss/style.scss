@@ -1,0 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+$bk-hf: rgb(70, 70, 70);
+
+$color-text: black;
+$color-link-hover: pink;
+
+$color-table-head: rgb(106, 106, 255);
+
+$color-table-row-odd: transparent;
+$color-table-row-even: rgb(230, 230, 230);
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+    color: $color-text;
+}
+
+header {
+
+    padding: 0.5rem 1rem;
+    color: white;
+    background-color: $bk-hf;
+
+    & ul {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        list-style-type: none;
+    }
+
+    & li {
+        margin-right: 1rem;
+    }
+
+    & a {
+        color: inherit;
+        text-decoration: none;
+
+        &:hover {
+            color: $color-link-hover;
+            text-decoration: underline;
+        }
+    }
+
+}
+
+main {
+    padding: 0 1rem;
+}
+
+footer {
+    margin-top: auto;
+    color: white;
+    background-color: $bk-hf;
+
+    & p {
+        font-size: 13px;
+        margin: 0.25rem 0;
+        text-align: center;
+    }
+}
+
+table {
+
+    &.pagination {
+        width: 100%;
+        margin-bottom: 1rem;
+
+        & td:first-child {
+            text-align: start;
+        }
+
+        & td {
+            text-align: center;
+        }
+
+        & td:last-child {
+            text-align: end;
+        }
+    }
+
+    &.results,
+    &.logger {
+        border-collapse: collapse;
+        width: 100%;
+
+        & th {
+            color: white;
+            background-color: $color-table-head;
+        }
+
+        & tr:nth-child(2n + 1) {
+            background-color: $color-table-row-odd;
+        }
+
+        & tr:nth-child(2n + 0) {
+            background-color: $color-table-row-even;
+        }
+
+        & th,
+        td {
+            text-align: center;
+            border: 1px solid black;
+            padding: 0.25rem;
+        }
+    }
+
+    &.logger {
+        font-size: 13px;
+        font-family: monospace;
+
+        & th,
+        td {
+            text-align: start;
+        }
+    }
+
+}
+
+button a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.logger-container {
+    width: 100%;
+    max-width: max(min-content, 800px);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.margin-y-1 {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.margin-b-05 {
+    margin-bottom: 0.5rem;
+}
+
+.max-width-800 {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.w-100 {
+    width: 100%;
+}
