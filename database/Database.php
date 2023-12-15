@@ -27,6 +27,147 @@ class Database
         $this->db = new PDO("mysql:dbname=" . $this->dbName . ";host=" . $this->dbHost, $this->username, $this->userpass);
     }
 
+    public function createAccount(string $identifier, string $password, string $idAbonne)
+    {
+        $query = "
+            INSERT INTO 
+                account (account.identifier, account.password, account.id_abonne)
+        ";
+
+        $valuesList = [];
+
+        $valuesList += [":identifier" => [$identifier, PDO::PARAM_STR]];
+        $valuesList += [":password" => [password_hash($password, HASH_OPTIONS["algo"], [HASH_OPTIONS["options"]]), PDO::PARAM_STR]];
+        $valuesList += [":id_abonne" => [$idAbonne, PDO::PARAM_INT]];
+
+        $query .= "
+            VALUES
+                (:identifier, :password, :id_abonne);";
+
+        $this->addDebugMsg(__METHOD__, $query, $valuesList);
+
+        $statement = $this->db->prepare($query);
+
+        foreach ($valuesList as $key => $value) {
+            $statement->bindParam($key, $value[0], $value[1]);
+        }
+
+        $statement->execute();
+        return $this->db->lastInsertId();
+    }
+
+    public function haveAccount(string $idAbonne)
+    {
+        $query = "
+            SELECT
+                COUNT(*) > 0 AS haveAccount
+            FROM
+                account";
+
+        $conditionsList = [];
+        $valuesList = [];
+
+        $valuesList += [":id_abonne" => [$idAbonne, PDO::PARAM_INT]];
+        array_push($conditionsList, "account.id_abonne = :id_abonne");
+
+        if (!empty($conditionsList)) {
+            $query .= "
+                WHERE
+                    " . join(" AND ", $conditionsList);
+        }
+
+        $query .= ";";
+
+        $this->addDebugMsg(__METHOD__, $query, $valuesList);
+
+        $statement = $this->db->prepare($query);
+
+        foreach ($valuesList as $key => $value) {
+            $statement->bindParam($key, $value[0], $value[1]);
+        }
+
+        $statement->execute();
+
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        return $result["haveAccount"];
+    }
+
+    public function uniqueIdenfierAccount(string $identifier)
+    {
+        $query = "
+            SELECT
+                COUNT(*) = 0 AS isUnique
+            FROM
+                account";
+
+        $conditionsList = [];
+        $valuesList = [];
+
+        $valuesList += [":identifier" => [$identifier, PDO::PARAM_STR]];
+        array_push($conditionsList, "account.identifier = :identifier");
+
+        if (!empty($conditionsList)) {
+            $query .= "
+                WHERE
+                    " . join(" AND ", $conditionsList);
+        }
+
+        $query .= ";";
+
+        $this->addDebugMsg(__METHOD__, $query, $valuesList);
+
+        $statement = $this->db->prepare($query);
+
+        foreach ($valuesList as $key => $value) {
+            $statement->bindParam($key, $value[0], $value[1]);
+        }
+
+        $statement->execute();
+
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        return $result["isUnique"];
+    }
+
+    public function getAccountFromIdentifier(string $identifier)
+    {
+        $query = "
+            SELECT
+                account.id AS id,
+                account.identifier AS identifier,
+                account.password AS password,
+                account.id_abonne AS idAbonne,
+                account.role AS role
+            FROM
+                account";
+
+        $conditionsList = [];
+        $valuesList = [];
+
+        $valuesList += [":identifier" => [$identifier, PDO::PARAM_STR]];
+        array_push($conditionsList, "account.identifier = :identifier");
+
+        if (!empty($conditionsList)) {
+            $query .= "
+                WHERE
+                    " . join(" AND ", $conditionsList);
+        }
+
+        $query .= ";";
+
+        $this->addDebugMsg(__METHOD__, $query, $valuesList);
+
+        $statement = $this->db->prepare($query);
+
+        foreach ($valuesList as $key => $value) {
+            $statement->bindParam($key, $value[0], $value[1]);
+        }
+
+        $statement->execute();
+
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
     public function searchBookCount(string $title, string $author, string $editor, string $available)
     {
 
@@ -72,8 +213,8 @@ class Database
 
         if (!empty($conditionsList)) {
             $query .= "
-            WHERE
-                " . join(" AND ", $conditionsList);
+                WHERE
+                    " . join(" AND ", $conditionsList);
         }
 
         $query .= ";";
@@ -171,6 +312,78 @@ class Database
         return $result;
     }
 
+    public function createSubscriber(string $lastname, string $firstname, string $birthday, string $address, string $postalCode, string $city)
+    {
+
+        $query = "
+            INSERT INTO 
+                abonne (abonne.nom, abonne.prenom, abonne.date_naissance, abonne.adresse, abonne.code_postal, abonne.ville, abonne.date_inscription)
+        ";
+
+        $insertList = [];
+        $valuesList = [];
+
+        $valuesList += [":lastname" => [$lastname, PDO::PARAM_STR]];
+        array_push($insertList, ":lastname");
+
+        $valuesList += [":firstname" => [$firstname, PDO::PARAM_STR]];
+        array_push($insertList, ":firstname");
+
+        if (!empty($birthday)) {
+            $valuesList += [":birthday" => [$birthday, PDO::PARAM_STR]];
+            array_push($insertList, ":birthday");
+        } else {
+            $valuesList += [":birthday" => [null, PDO::PARAM_NULL]];
+            array_push($insertList, ":birthday");
+        }
+
+        if (!empty($address)) {
+            $valuesList += [":address" => [$address, PDO::PARAM_STR]];
+            array_push($insertList, ":address");
+        } else {
+            $valuesList += [":address" => [null, PDO::PARAM_NULL]];
+            array_push($insertList, ":address");
+        }
+
+        if (!empty($postalCode)) {
+            $valuesList += [":postalCode" => [$postalCode, PDO::PARAM_STR]];
+            array_push($insertList, ":postalCode");
+        } else {
+            $valuesList += [":postalCode" => [null, PDO::PARAM_NULL]];
+            array_push($insertList, ":postalCode");
+        }
+
+        if (!empty($city)) {
+            $valuesList += [":city" => [$city, PDO::PARAM_STR]];
+            array_push($insertList, ":city");
+        } else {
+            $valuesList += [":city" => [null, PDO::PARAM_NULL]];
+            array_push($insertList, ":city");
+        }
+
+        $valuesList += [":date_inscription" => [date("Y-m-d"), PDO::PARAM_STR]];
+        array_push($insertList, ":date_inscription");
+
+        if (!empty($insertList)) {
+            $query .= "
+                VALUES
+                    (" . join(" , ", $insertList) . ")";
+        }
+
+        $query .= ";";
+
+        $this->addDebugMsg(__METHOD__, $query, $valuesList);
+
+        $statement = $this->db->prepare($query);
+
+        foreach ($valuesList as $key => $value) {
+            $statement->bindParam($key, $value[0], $value[1]);
+        }
+
+        $statement->execute();
+        return $this->db->lastInsertId();
+    }
+
     public function searchSubscriberCount(string $lastname, string $firstname, string $city, string $subscriber)
     {
 
@@ -210,6 +423,46 @@ class Database
         }
 
         $query .= ";";
+
+        $this->addDebugMsg(__METHOD__, $query, $valuesList);
+
+        $statement = $this->db->prepare($query);
+
+        foreach ($valuesList as $key => $value) {
+            $statement->bindParam($key, $value[0], $value[1]);
+        }
+
+        $statement->execute();
+
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
+    public function existingSubscriber(string $lastname, string $firstname)
+    {
+        $query = "
+            SELECT
+                COUNT(*) AS existing,
+                abonne.id AS id
+            FROM
+                abonne";
+
+        $conditionsList = [];
+        $valuesList = [];
+
+        $valuesList += [":lastname" => [strtolower($lastname), PDO::PARAM_STR]];
+        array_push($conditionsList, "LOWER(abonne.nom) = " . ":lastname");
+
+        $valuesList += [":firstname" => [strtolower($firstname), PDO::PARAM_STR]];
+        array_push($conditionsList, "LOWER(abonne.prenom) = " . ":firstname");
+
+        if (!empty($conditionsList)) {
+            $query .= "
+            WHERE
+                " . join(" AND ", $conditionsList);
+        }
+
+        $query .= " LIMIT 1;";
 
         $this->addDebugMsg(__METHOD__, $query, $valuesList);
 
@@ -323,37 +576,76 @@ class Database
         return $result;
     }
 
-    public function updateSubscriber(string $id, string $lastname, string $firstname, string $birthday, string $address, string $postalCode, string $city, string $dateInscription, string $dateEndSub)
+    public function updateSubscriber(string $id, ?string $lastname, ?string $firstname, ?string $birthday, ?string $address, ?string $postalCode, ?string $city, ?string $dateInscription, ?string $dateEndSub)
     {
-
-        $valuesList = [];
-        $valuesList += [":id" => [$id, PDO::PARAM_INT]];
-        $valuesList += [":firstname" => [$firstname, PDO::PARAM_STR]];
-        $valuesList += [":lastname" => [$lastname, PDO::PARAM_STR]];
-        $valuesList += [":birthday" => [$birthday, PDO::PARAM_STR]];
-        $valuesList += [":address" => [$address, PDO::PARAM_STR]];
-        $valuesList += [":postalCode" => [$postalCode, PDO::PARAM_STR]];
-        $valuesList += [":city" => [$city, PDO::PARAM_STR]];
-        $valuesList += [":dateInscription" => [$dateInscription, PDO::PARAM_STR]];
-        $valuesList += [":dateEndSub" => [$dateEndSub, PDO::PARAM_STR]];
 
         $query = "
             UPDATE
-                abonne
-            SET
-                abonne.prenom = :firstname, abonne.nom = :lastname, abonne.date_naissance = :birthday, abonne.adresse = :address, abonne.code_postal = :postalCode, abonne.ville = :city, abonne.date_inscription = :dateInscription, abonne.date_fin_abo = :dateEndSub
+                abonne";
+
+        $setList = [];
+        $valuesList = [];
+        $valuesList += [":id" => [$id, PDO::PARAM_INT]];
+
+        if ($lastname) {
+            $valuesList += [":lastname" => [$lastname, PDO::PARAM_STR]];
+            array_push($setList, "abonne.nom = :lastname");
+        }
+
+        if ($firstname) {
+            $valuesList += [":firstname" => [$firstname, PDO::PARAM_STR]];
+            array_push($setList, "abonne.prenom = :firstname");
+        }
+
+        if ($birthday) {
+            $valuesList += [":birthday" => [$birthday, PDO::PARAM_STR]];
+            array_push($setList, "abonne.date_naissance = :birthday");
+        }
+
+        if ($address) {
+            $valuesList += [":address" => [$address, PDO::PARAM_STR]];
+            array_push($setList, "abonne.adresse = :address");
+        }
+
+        if ($postalCode) {
+            $valuesList += [":postalCode" => [$postalCode, PDO::PARAM_STR]];
+            array_push($setList, "abonne.code_postal = :postalCode");
+        }
+
+        if ($city) {
+            $valuesList += [":city" => [$city, PDO::PARAM_STR]];
+            array_push($setList, "abonne.ville = UPPER(:city)");
+        }
+
+        if ($dateInscription) {
+            $valuesList += [":dateInscription" => [$dateInscription, PDO::PARAM_STR]];
+            array_push($setList, "abonne.date_inscription = :dateInscription");
+        }
+
+        if ($dateEndSub) {
+            $valuesList += [":dateEndSub" => [$dateEndSub, PDO::PARAM_STR]];
+            array_push($setList, "abonne.date_fin_abo = :dateEndSub");
+        }
+
+        $query .= "
+            SET 
+                " . join(" , ", $setList);
+
+        $query .= "
             WHERE
                 id = :id";
 
-        $this->addDebugMsg(__METHOD__, $query, $valuesList);
+        $query .= ";";
 
-        $statement = $this->db->prepare($query);
-
-        foreach ($valuesList as $key => $value) {
-            $statement->bindParam($key, $value[0], $value[1]);
+        if (count($setList) > 0) {
+            $this->addDebugMsg(__METHOD__, $query, $valuesList);
+            $statement = $this->db->prepare($query);
+            foreach ($valuesList as $key => $value) {
+                $statement->bindParam($key, $value[0], $value[1]);
+            }
+            $statement->execute();
         }
 
-        $statement->execute();
     }
 
     public function getBorroweds(string $id)
@@ -523,6 +815,9 @@ class Database
             switch ($value[1]) {
                 case PDO::PARAM_STR:
                     $query = str_replace($key, "'" . $value[0] . "'", $query);
+                    break;
+                case PDO::PARAM_NULL:
+                    $query = str_replace($key, "null", $query);
                     break;
                 default:
                     $query = str_replace($key, $value[0], $query);

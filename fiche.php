@@ -23,7 +23,6 @@ if (isset($_GET["id"]) && !empty($_GET["id"]) && is_numeric($_GET["id"])) {
         $maxCategories = $database->getMaxBorrowedCategories($_GET["id"]);
         $maxCategory = $database->getMaxBorrowedCategory($_GET["id"]);
         $suggests = $database->getSuggest($_GET["id"]);
-
     }
 }
 
@@ -42,14 +41,16 @@ if (isset($_GET["id"]) && !empty($_GET["id"]) && is_numeric($_GET["id"])) {
                 <fieldset>
                     <legend>Fiche de l'abonne n° <?= $results["id"] ?></legend>
                     <input type="hidden" name="id" value="<?= $results["id"] ?>">
-                    <div class="margin-b-05">
-                        <label for="lastname">Nom :</label>
-                        <input class="w-100" type="text" id="lastname" name="lastname" value="<?= $results["lastName"] ?>">
-                    </div>
-                    <div class="margin-b-05">
-                        <label for="firstname">Prénom :</label>
-                        <input class="w-100" type="text" id="firstname" name="firstname" value="<?= $results["firstName"] ?>">
-                    </div>
+                    <?php if ($_SESSION["gestionnaire"]) : ?>
+                        <div class="margin-b-05">
+                            <label for="lastname">Nom :</label>
+                            <input class="w-100" type="text" id="lastname" name="lastname" value="<?= $results["lastName"] ?>">
+                        </div>
+                        <div class="margin-b-05">
+                            <label for="firstname">Prénom :</label>
+                            <input class="w-100" type="text" id="firstname" name="firstname" value="<?= $results["firstName"] ?>">
+                        </div>
+                    <?php endif; ?>
                     <div class="margin-b-05">
                         <label for="birthday">Date de naissance :</label>
                         <input class="w-100" type="date" id="birthday" name="birthday" value="<?= $results["birthday"] ?>">
@@ -66,14 +67,16 @@ if (isset($_GET["id"]) && !empty($_GET["id"]) && is_numeric($_GET["id"])) {
                         <label for="city">Ville :</label>
                         <input class="w-100" type="text" id="city" name="city" value="<?= $results["city"] ?>">
                     </div>
-                    <div class="margin-b-05">
-                        <label for="dateInscription">Date d'inscription :</label>
-                        <input class="w-100" type="date" id="dateInscription" name="dateInscription" value="<?= $results["dateInscription"] ?>">
-                    </div>
-                    <div class="margin-b-05">
-                        <label for="dateEndSub">Date fin abonnement :</label>
-                        <input class="w-100" type="date" id="dateEndSub" name="dateEndSub" value="<?= $results["dateEndSub"] ?>">
-                    </div>
+                    <?php if ($_SESSION["gestionnaire"]) : ?>
+                        <div class="margin-b-05">
+                            <label for="dateInscription">Date d'inscription :</label>
+                            <input class="w-100" type="date" id="dateInscription" name="dateInscription" value="<?= $results["dateInscription"] ?>">
+                        </div>
+                        <div class="margin-b-05">
+                            <label for="dateEndSub">Date fin abonnement :</label>
+                            <input class="w-100" type="date" id="dateEndSub" name="dateEndSub" value="<?= $results["dateEndSub"] ?>">
+                        </div>
+                    <?php endif; ?>
                     <div>
                         <button type="submit">Modifier</button>
                     </div>

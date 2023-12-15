@@ -157,3 +157,30 @@ button a {
 .w-100 {
     width: 100%;
 }
+
+.form-error, .form-success {
+    text-align: center;
+    color: white;
+}
+
+.form-field-error, .form-field-success {
+    margin: 0;
+    font-size: 12px;
+    text-align: right;
+}
+
+.form-error {
+    background-color: red;
+}
+
+.form-success {
+    background-color: green;
+}
+
+.form-field-error {
+    color: red;
+}
+
+.form-field-success {
+    color: green;
+}

@@ -20,15 +20,15 @@ $results = null;
 
 if (!empty($_POST)) {
 
-    $id = $_POST["id"];
-    $lastname = $_POST["lastname"];
-    $firstname = $_POST["firstname"];
-    $birthday = $_POST["birthday"];
-    $address = $_POST["address"];
-    $postalCode = $_POST["postalCode"];
-    $city = $_POST["city"];
-    $dateInscription = $_POST["dateInscription"];
-    $dateEndSub = $_POST["dateEndSub"];
+    $id = isset($_POST["id"]) ? $_POST["id"] : null;
+    $lastname = isset($_POST["lastname"]) ? $_POST["lastname"] : null;
+    $firstname = isset($_POST["firstname"]) ? $_POST["firstname"] : null;
+    $birthday = isset($_POST["birthday"]) ? $_POST["birthday"] : null;
+    $address = isset($_POST["address"]) ? $_POST["address"] : null;
+    $postalCode = isset($_POST["postalCode"]) ? $_POST["postalCode"] : null;
+    $city = isset($_POST["city"]) ? $_POST["city"] : null;
+    $dateInscription = isset($_POST["dateInscription"]) ? $_POST["dateInscription"] : null;
+    $dateEndSub = isset($_POST["dateEndSub"]) ? $_POST["dateEndSub"] : null;
 
     $database->updateSubscriber($id, $lastname, $firstname, $birthday, $address, $postalCode, $city, $dateInscription, $dateEndSub);
 
