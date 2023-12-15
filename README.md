@@ -6,7 +6,7 @@ Jérôme Pourra
 
 ## Création de la table account
 
-Gestionnaire : admin | password123
+Gestionnaire : admin | password123 <br>
 Abonne : test | password123
 
 ```sql
