@@ -34,4 +34,11 @@ INSERT INTO `account` (`id`, `identifier`, `password`, `id_abonne`, `role`) VALU
 (37, 'admin', '$2y$10$S4HCI6RSZUPibDcoHsDjVeoOsNGn0uqASwfcLBDPbPCMSauH.papC', 3034, 'gestionnaire'),
 (38, 'test', '$2y$10$mmTdJnDl/rLkJ0OHwo0GieXTL2Ouo3TkPVOMDxylo09hWYjszh6F2', 3035, 'abonne');
 
+--
+-- Contraintes pour la table `account`
+--
+ALTER TABLE `account`
+  ADD CONSTRAINT `account_ibfk_1` FOREIGN KEY (`id_abonne`) REFERENCES `abonne` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+COMMIT;
+
 ```
